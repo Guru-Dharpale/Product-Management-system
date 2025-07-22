@@ -4,13 +4,18 @@ import com.Product_Mangement_Backend.model.Product;
 import com.Product_Mangement_Backend.repositry.ProductRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.Product_Mangement_Backend.model.User;
 import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductServices {
     @Autowired
     private ProductRepositry productRepositry;
+
+    @Override
+    public List<Product> getProductsByUser(User user) {
+        return productRepositry.findByUser(user);
+    }
 
     @Override
     public Product saveProduct(Product product) {

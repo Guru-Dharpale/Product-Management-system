@@ -1,4 +1,4 @@
-
+// src/ProductManagement.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ function ProductManagement({ token, setToken }) {
   // Fetch all products
   const fetchProducts = () => {
     axios
-      .get(`${API_URL}/`, {
+      .get(`${API_URL}/products`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setProducts(res.data))
@@ -47,7 +47,7 @@ function ProductManagement({ token, setToken }) {
     if (editingId) {
       // Edit
       axios
-        .post(`${API_URL}/editProduct/${editingId}`, form, {
+        .put(`${API_URL}/products/${editingId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {
@@ -59,7 +59,7 @@ function ProductManagement({ token, setToken }) {
     } else {
       // Add
       axios
-        .post(`${API_URL}/saveProduct`, form, {
+        .post(`${API_URL}/products/save`, form, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {
@@ -73,7 +73,7 @@ function ProductManagement({ token, setToken }) {
   // Delete product
   const handleDelete = (id) => {
     axios
-      .get(`${API_URL}/deleteProduct/${id}`, {
+      .delete(`${API_URL}/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => fetchProducts())
@@ -105,7 +105,7 @@ function ProductManagement({ token, setToken }) {
       fetchProducts();
     } else {
       axios
-        .get(`${API_URL}/search?keyword=${keyword}`, {
+        .get(`${API_URL}/products/search?keyword=${keyword}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setProducts(res.data))

@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
+  createBrowserRouter,
+  RouterProvider,
   Navigate,
 } from "react-router-dom";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
 import ProductManagement from "./ProductManagement";
+// import CheckAuthentication from "./Components/CheckAuthentication";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  console.log("Current token value:", token); // <-- Add this line to check token
+  console.log("Current token value:", token);
   useEffect(() => {
     const onStorage = () => {
       setToken(localStorage.getItem("token") || "");
@@ -21,24 +21,26 @@ function App() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  return (
-    <Router>
-      <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login setToken={setToken} />} />
-        <Route
-          path="/"
-          element={
-            token ? (
-              <ProductManagement token={token} setToken={setToken} />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-      </Routes>
-    </Router>
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "/login",
+      element: <Login setToken={setToken} />,
+    },
+    {
+      path: "/",
+      element: token ? (
+        <ProductManagement token={token} setToken={setToken} />
+      ) : (
+        <Navigate to="/login" replace />
+      ),
+    },
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

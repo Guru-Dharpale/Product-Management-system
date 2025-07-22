@@ -3,6 +3,7 @@ package com.Product_Mangement_Backend.service;
 import com.Product_Mangement_Backend.model.Product;
 import org.springframework.stereotype.Service;
 
+import com.Product_Mangement_Backend.model.User;
 import java.util.List;
 
 public interface ProductServices {
@@ -18,5 +19,7 @@ public interface ProductServices {
     public Product editProduct(Product product, int id);
 
     List<Product> searchProducts(String keyword);
+
+    List<Product> getProductsByUser(User user);
 
 }

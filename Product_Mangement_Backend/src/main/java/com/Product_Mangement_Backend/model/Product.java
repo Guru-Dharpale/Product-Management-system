@@ -9,8 +9,23 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import com.Product_Mangement_Backend.model.User;
+
 @Entity
 public class Product {
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Product_ID")
@@ -24,8 +39,6 @@ public class Product {
     private Double price;
     @Column(name = "Product_Status")
     private String status;
-
-  
 
     public Product() {
         super();
@@ -87,6 +100,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", status='" + status + '\'' +
+
                 '}';
     }
 }
