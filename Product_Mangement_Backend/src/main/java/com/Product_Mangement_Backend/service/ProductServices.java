@@ -1,25 +1,23 @@
 package com.Product_Mangement_Backend.service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.Product_Mangement_Backend.model.Product;
-import org.springframework.stereotype.Service;
-
 import com.Product_Mangement_Backend.model.User;
-import java.util.List;
 
 public interface ProductServices {
 
-    public Product saveProduct(Product product);
+    Product saveProduct(Product product);
 
-    public List<Product> getAllProduct();
+    Page<Product> getProductsByUser(User user, Pageable pageable);
 
-    public Product getAllProductById(Integer id);
+    Page<Product> searchProducts(String keyword, User user, Pageable pageable);
 
-    public String deleteProduct(Integer id);
+    Product getAllProductById(Integer id);
 
-    public Product editProduct(Product product, int id);
+    String deleteProduct(Integer id);
 
-    List<Product> searchProducts(String keyword);
+    Product editProduct(Product product, int id);
 
-    List<Product> getProductsByUser(User user);
-
+    // Remove the old List-based methods!
 }

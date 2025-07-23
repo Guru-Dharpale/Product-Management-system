@@ -14,6 +14,9 @@ import org.springframework.security.core.Authentication;
 import com.Product_Mangement_Backend.model.User;
 import com.Product_Mangement_Backend.repositry.UserRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -24,12 +27,34 @@ public class ProductController {
     @Autowired
     private ProductServices productServices;
 
-    // Get all products for the logged-in user
+    // Get all products for the logged-in user (paginated + sorted)
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(Authentication authentication) {
+    public ResponseEntity<Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username);
-        List<Product> products = productServices.getProductsByUser(user);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Page<Product> products = productServices.getProductsByUser(user, PageRequest.of(page, size, sort));
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    // Search products for the logged-in user (paginated + sorted)
+    @GetMapping("/search")
+    public ResponseEntity<Page<Product>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Authentication authentication) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Page<Product> products = productServices.searchProducts(keyword, user, PageRequest.of(page, size, sort));
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -42,32 +67,20 @@ public class ProductController {
         return new ResponseEntity<>(productServices.saveProduct(product), HttpStatus.CREATED);
     }
 
-    // Search products for the logged-in user
-    @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username);
-        List<Product> products = productServices.searchProducts(keyword)
-                .stream()
-                .filter(p -> p.getUser().getId() == user.getId())
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(products, HttpStatus.OK);
-    }
-
-    // Get product by ID (optional: you may want to check user ownership here)
+    // Get product by ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
         return new ResponseEntity<>(productServices.getAllProductById(id), HttpStatus.OK);
     }
 
-    // Delete product by ID (optional: you may want to check user ownership here)
+    // Delete product by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         productServices.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // Edit product (optional: you may want to check user ownership here)
+    // Edit product
     @PutMapping("/{id}")
     public ResponseEntity<Product> editProduct(@RequestBody Product product, @PathVariable int id) {
         return new ResponseEntity<>(productServices.editProduct(product, id), HttpStatus.OK);

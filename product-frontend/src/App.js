@@ -4,15 +4,14 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import Register from "./Components/Register";
-import Login from "./Components/Login";
-import ProductManagement from "./ProductManagement";
+import Register from "./Components/Auth/Register";
+import Login from "./Components/Auth/Login";
+import ProductManagement from "./Components/ProductManagment/ProductManagment";
 // import CheckAuthentication from "./Components/CheckAuthentication";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  console.log("Current token value:", token);
   useEffect(() => {
     const onStorage = () => {
       setToken(localStorage.getItem("token") || "");
